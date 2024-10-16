@@ -160,3 +160,73 @@ cython_debug/
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment variables file
+.env
+
+# Flask-specific files
+instance/
+*.log
+
+# Flask migrations
+migrations/
+
+# Virtual environments
+env/
+venv/
+ENV/
+.venv/
+.VENV/
+
+# Jupyter Notebooks (if any)
+.ipynb_checkpoints
+
+# Database files
+*.sqlite3
+*.db
+
+# macOS files
+.DS_Store
+
+# Linux files
+*.swp
+
+# Pytest cache
+.pytest_cache/
+
+# Coverage reports
+htmlcov/
+.coverage
+.tox/
+.nox/
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+
+# MyPy files
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# PyInstaller
+#  Usually these are written by a Python script from the source
+dist/
+build/
+*.spec
+
+# pylint and mypy
+.mypy_cache/
+.pytype/
+pylint.d/
+
+# Other Python package files
+pip-log.txt
+pip-delete-this-directory.txt
+__pypackages__/

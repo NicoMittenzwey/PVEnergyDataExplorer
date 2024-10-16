@@ -1,0 +1,143 @@
+<!-- app/templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Energy Analysis</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Include Bootstrap Datepicker CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/css/bootstrap-datepicker.min.css">
+</head>
+<body>
+
+<div class="container mt-4">
+    <h1>Energy Analysis</h1>
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" id="analysisTabs" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link {% if not energy_analysis_results %}active{% endif %}" id="input-tab" data-toggle="tab" href="#input" role="tab" aria-controls="input" aria-selected="{% if not energy_analysis_results %}true{% else %}false{% endif %}">Input</a>
+        </li>
+        {% if energy_analysis_results %}
+        <li class="nav-item">
+            <a class="nav-link" id="original-analysis-tab" data-toggle="tab" href="#original-analysis" role="tab" aria-controls="original-analysis" aria-selected="true">Original Analysis</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="energy-usage-tab" data-toggle="tab" href="#energy-usage" role="tab" aria-controls="energy-usage" aria-selected="false">Energy Usage and Export Analysis</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="battery-simulation-tab" data-toggle="tab" href="#battery-simulation" role="tab" aria-controls="battery-simulation" aria-selected="false">Battery Simulation</a>
+        </li>
+        {% endif %}
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <!-- Input Tab -->
+        <div class="tab-pane fade {% if not energy_analysis_results %}show active{% endif %}" id="input" role="tabpanel" aria-labelledby="input-tab">
+            <div class="mt-4">
+                <form action="/" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="consumption_file">Energy Consumption CSV:</label>
+                        <input type="file" class="form-control-file" id="consumption_file" name="consumption_file" accept=".csv" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="generation_file">Energy Generation CSV:</label>
+                        <input type="file" class="form-control-file" id="generation_file" name="generation_file" accept=".csv" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="scaling_factor">Generation Scaling Factor (0.1 - 5.0):</label>
+                        <input type="number" class="form-control" id="scaling_factor" name="scaling_factor" min="0.1" max="5.0" step="0.1" value="{{ scaling_factor_value | default(1.0) }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="battery_capacity">Battery Capacity (kWh):</label>
+                        <input type="number" class="form-control" id="battery_capacity" name="battery_capacity" min="0" max="100" step="1" value="{{ battery_capacity_value | default(10) }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="start_date">Start Date:</label>
+                        <input type="text" class="form-control datepicker" id="start_date" name="start_date" autocomplete="off" value="{{ start_date_str | default('') }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="end_date">End Date:</label>
+                        <input type="text" class="form-control datepicker" id="end_date" name="end_date" autocomplete="off" value="{{ end_date_str | default('') }}">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Analyze</button>
+                </form>
+            </div>
+
+            {% if data_preview %}
+            <div class="mt-4">
+                <h2>Data Preview (First 100 Lines of Selected Interval)</h2>
+                {{ data_preview_html | safe }}
+            </div>
+            {% endif %}
+        </div>
+
+        {% if energy_analysis_results %}
+        <!-- Original Analysis Tab -->
+        <div class="tab-pane fade" id="original-analysis" role="tabpanel" aria-labelledby="original-analysis-tab">
+            <div class="mt-4">
+                <h2>Original Analysis</h2>
+                <img src="data:image/png;base64,{{ original_analysis_fig }}" class="img-fluid" alt="Original Analysis Plot">
+            </div>
+        </div>
+
+        <!-- Energy Usage and Export Analysis Tab -->
+        <div class="tab-pane fade" id="energy-usage" role="tabpanel" aria-labelledby="energy-usage-tab">
+            <div class="mt-4">
+                <h2>Energy Usage and Export Analysis</h2>
+                {% include 'partials/energy_usage.html' %}
+            </div>
+        </div>
+
+        <!-- Battery Simulation Tab -->
+        <div class="tab-pane fade" id="battery-simulation" role="tabpanel" aria-labelledby="battery-simulation-tab">
+            <div class="mt-4">
+                <h2>Battery Simulation</h2>
+                {% include 'partials/battery_simulation.html' %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Include Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- Include Bootstrap Datepicker JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.min.js"></script>
+<!-- Include Bootstrap Datepicker CSS (already included in head) -->
+
+<!-- Initialize Datepicker -->
+<script>
+    $(function() {
+        $('.datepicker').datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true,
+            todayHighlight: true,
+            clearBtn: true,
+            orientation: 'bottom auto',
+            startView: 2, // Start with year view
+            minViewMode: 0,
+            maxViewMode: 2
+        });
+
+        // Set the datepickers to the previously selected dates, if available
+        {% if start_date_str %}
+            $('#start_date').datepicker('update', '{{ start_date_str }}');
+        {% endif %}
+        {% if end_date_str %}
+            $('#end_date').datepicker('update', '{{ end_date_str }}');
+        {% endif %}
+
+        // Activate the appropriate tab after form submission
+        {% if energy_analysis_results %}
+            // Activate the Original Analysis tab
+            $('#analysisTabs a[href="#original-analysis"]').tab('show');
+        {% endif %}
+    });
+</script>
+
+</body>
+</html>

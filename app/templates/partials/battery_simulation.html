@@ -1,0 +1,15 @@
+<!-- app/templates/partials/battery_simulation.html -->
+{% if battery_simulation_results.error %}
+    <p>{{ battery_simulation_results.error }}</p>
+{% else %}
+    <p><strong>Total Consumption:</strong> {{ battery_simulation_results.total_consumption | round(2) }} kWh</p>
+    <p><strong>Total Generation:</strong> {{ battery_simulation_results.total_generation | round(2) }} kWh</p>
+    <p><strong>Energy Provided by Battery:</strong> {{ battery_simulation_results.energy_from_battery | round(2) }} kWh</p>
+    <p><strong>Energy Required from Grid:</strong> {{ battery_simulation_results.energy_from_grid | round(2) }} kWh</p>
+    <p><strong>Energy Exported to Grid:</strong> {{ battery_simulation_results.energy_to_grid | round(2) }} kWh</p>
+    <p><strong>Final Battery Charge:</strong> {{ battery_simulation_results.final_charge | round(2) }} kWh</p>
+    <p><strong>Battery Utilization:</strong> {{ battery_simulation_results.battery_utilization | round(2) }}%</p>
+    <p><strong>Self-Consumption Rate:</strong> {{ battery_simulation_results.self_consumption_rate | round(2) }}%</p>
+    <p><strong>Autarky Rate:</strong> {{ battery_simulation_results.autarky_rate | round(2) }}%</p>
+    <img src="data:image/png;base64,{{ battery_simulation_results.battery_simulation_fig }}" class="img-fluid" alt="Battery Simulation Plot">
+{% endif %}

@@ -1,0 +1,33 @@
+<!-- app/templates/partials/energy_usage.html -->
+<p><strong>Total Energy Generated:</strong> {{ energy_analysis_results.overall_results.total_generation | round(2) }} kWh</p>
+<p><strong>Total Energy Used by Consumer:</strong> {{ energy_analysis_results.overall_results.total_consumer_usage | round(2) }} kWh</p>
+<p><strong>Total Unused Generated Energy:</strong> {{ energy_analysis_results.overall_results.total_unused_generated | round(2) }} kWh</p>
+<p><strong>Total Grid Consumption:</strong> {{ energy_analysis_results.overall_results.total_grid_consumption | round(2) }} kWh</p>
+<p><strong>Percentage of Consumer Usage Covered by Generation:</strong> {{ energy_analysis_results.overall_results.coverage_percentage | round(2) }}%</p>
+
+<h3>Seasonal Energy Analysis</h3>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Season</th>
+            <th>Energy Generated (kWh)</th>
+            <th>Energy Used by Consumer (kWh)</th>
+            <th>Unused Generated Energy (kWh)</th>
+            <th>Grid Consumption (kWh)</th>
+            <th>Coverage Percentage (%)</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in energy_analysis_results.seasonal_energy %}
+        <tr>
+            <td>{{ row.season }}</td>
+            <td>{{ row.generation_kWh | round(2) }}</td>
+            <td>{{ row.consumer_usage_kWh | round(2) }}</td>
+            <td>{{ row.unused_generated_kWh | round(2) }}</td>
+            <td>{{ row.grid_consumption_kWh | round(2) }}</td>
+            <td>{{ row.generation_coverage_percentage | round(2) }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<img src="data:image/png;base64,{{ energy_analysis_results.energy_analysis_fig }}" class="img-fluid" alt="Energy Analysis Plot">
